@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pet Adoption and Care</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1> Pet Adoption and Care</h1>
+
+        <p>Find your perfect furry companion.</p>
+
+    </header>
+
+
+    <main class="layout">
+
+        <div class="left-column">
+
+            <section class="featured-card">
+
+                <div class="featured-text">
+
+                    <h2>Featured Pet</h2>
+
+                    <h3>Maltipoo</h3>
+
+                    <p>
+                        Friendly, playful and full of love. Looking for a
+                        forever home!
+                    </p>
+
+                    <button>Learn More</button>
+
+                </div>
+
+                <div class="featured-image">
+
+                    <img src="dog.jpg" alt="Maltipoo">
+
+                </div>
+
+            </section>
+
+
+            <section class="pets-section">
+
+                <h2>Available Pets</h2>
+
+                <div class="container">
+
+                    <div class="card">
+
+                        <img src="dog.jpg" alt="Maltipoo">
+
+                        <h3>Golden Retriever</h3>
+
+                        <p> Age : 2 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="dog2.jpg" alt="Pomeranian">
+
+                        <h3>Pomeranian</h3>
+
+                        <p>Age : 4 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="dog3.jpg" alt="Chow Chow">
+
+                        <h3>Chow Chow</h3>
+
+                        <p>Age : 6 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="dog4.jpg" alt="Shih Tzu">
+
+                        <h3>Shih Tzu</h3>
+
+                        <p>Age : 5 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="cat.jpg" alt="Persian Cat">
+
+                        <h3>Persian Cat</h3>
+
+                        <p>Age : 2 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="cat2.jpg" alt="Grey Cat">
+
+                        <h3>Grey Cat</h3>
+
+                        <p> Age : 3 Months</p>
+
+                    </div>
+
+
+
+                    <div class="card">
+
+                        <img src="cat3.jpg" alt="British Shorthair">
+
+                        <h3>British Shorthair</h3>
+
+                        <p> Age : 5 Months</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="right-column">
+
+
+            <section class="love-card">
+
+                <h2 style="font-size:55px;">💚</h2>
+
+                <h1>#AdoptDontShop</h1>
+
+                <p>
+
+                    Give homeless pets a loving forever home.
+
+                </p>
+
+                <br>
+
+                
+
+            </section>
+
+
+
+            <section class="wishlist">
+
+                <h2>Adoption Wishlist</h2>
+
+                <input
+                    type="text"
+                    id="petInput"
+                    placeholder="Enter pet name">
+
+                <button onclick="addPet()">
+
+                    Add
+
+                </button>
+
+                <ul id="petList">
+
+                    <li>
+
+                        Maltipoo
+
+                        <button class="remove"
+                            onclick="this.parentElement.remove()">
+
+                            ✖
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        Persian Cat
+
+                        <button class="remove"
+                            onclick="this.parentElement.remove()">
+
+                            ✖
+
+                        </button>
+
+                    </li>
+
+                    <li>
+
+                        Beagle
+
+                        <button class="remove"
+                            onclick="this.parentElement.remove()">
+
+                            ✖
+
+                        </button>
+
+                    </li>
+
+                </ul>
+
+                <br>
+
+                <div style="text-align:center;font-size:70px;">
+
+                    🐶🐱
+
+                </div>
+
+                <p style="text-align:center;margin-top:10px;">
+
+                    Together, we can make
+
+                    <br>
+
+                    their world better.
+
+                </p>
+
+                <div style="text-align:center;font-size:30px;">
+
+                    💚
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+    
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pet Adoption and Care</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Vue 2 - Practical 7 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+
+</head>
+
+<body>
+<div id="vueApp">
+
+<header>
+
+    <h1>Pet Adoption and Care</h1>
+
+    <p>Find your perfect furry companion.</p>
+
+    <button
+        type="button"
+        class="btn btn-success"
+        data-bs-toggle="modal"
+        data-bs-target="#registrationModal">
+        Register Now
+    </button>
+
+</header>
+
+
+<main class="layout">
+
+    <div class="left-column">
+
+        <!-- FEATURED PET -->
+
+        <section class="featured-card">
+
+            <div class="featured-text">
+
+                <h2>Featured Pet</h2>
+
+                <!-- PRACTICAL 7 - CUSTOM DIRECTIVE 1 -->
+                <h3 v-uppercase>Maltipoo</h3>
+
+                <p>
+                    Friendly, playful and full of love.
+                    Looking for a forever home!
+                </p>
+
+                <button onclick="showInfo()">Learn More</button>
+
+                <p id="petInfo"></p>
+
+            </div>
+
+            <div class="featured-image">
+
+                <img src="dog.jpg" alt="Maltipoo">
+
+            </div>
+
+        </section>
+
+
+        <!-- AVAILABLE PETS -->
+
+        <section class="pets-section">
+
+            <h2>Available Pets</h2>
+
+            <div class="container">
+
+                <div class="card" draggable="true">
+
+                    <img src="dog.jpg" alt="Maltipoo">
+
+                    <!-- PRACTICAL 7 - UPPERCASE DIRECTIVE -->
+                    <h3 v-uppercase>Maltipoo</h3>
+
+                    <p>Age : 2 Months</p>
+
+                    <!-- PRACTICAL 7 - DATE DIRECTIVE -->
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-01'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="dog2.jpg" alt="Pomeranian">
+
+                    <h3 v-uppercase>Pomeranian</h3>
+
+                    <p>Age : 4 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-05'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="dog3.jpg" alt="Chow Chow">
+
+                    <h3 v-uppercase>Chow Chow</h3>
+
+                    <p>Age : 6 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-08'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="dog4.jpg" alt="Shih Tzu">
+
+                    <h3 v-uppercase>Shih Tzu</h3>
+
+                    <p>Age : 5 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-10'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="cat.jpg" alt="Persian Cat">
+
+                    <h3 v-uppercase>Persian Cat</h3>
+
+                    <p>Age : 2 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-12'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="cat2.jpg" alt="Grey Cat">
+
+                    <h3 v-uppercase>Grey Cat</h3>
+
+                    <p>Age : 3 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-15'"></span>
+                    </p>
+
+                </div>
+
+
+                <div class="card" draggable="true">
+
+                    <img src="cat3.jpg" alt="British Shorthair">
+
+                    <h3 v-uppercase>British Shorthair</h3>
+
+                    <p>Age : 5 Months</p>
+
+                    <p class="date-text">
+                        Listed:
+                        <span v-format-date="'2026-09-18'"></span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DRAG AND DROP -->
+
+        <section class="drag-section">
+
+            <h2>Choose Your Pet</h2>
+
+            <p>Drag a pet card here:</p>
+
+            <div id="dropBox">
+
+                Drop Pet Here
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <div class="right-column">
+
+
+        <!-- ADOPTION MESSAGE -->
+
+        <section class="love-card">
+
+            <h2 style="font-size:55px;">💚</h2>
+
+            <h1>#AdoptDontShop</h1>
+
+            <p>
+                Give homeless pets a loving forever home.
+            </p>
+
+            <br>
+
+        </section>
+
+
+        <!-- VUE DYNAMIC WISHLIST -->
+
+        <section class="wishlist">
+
+    <h2>Adoption Wishlist</h2>
+
+    <input
+        type="text"
+        v-model="newPet"
+        @keyup.enter="addPet"
+        placeholder="Enter pet name">
+
+    <button @click="addPet">
+        Add
+    </button>
+
+    <ul
+        id="petList"
+        v-pet-list="wishlist"
+        @remove-pet="removePet">
+    </ul>
+
+    <br>
+
+    <div style="text-align:center;font-size:70px;">
+        🐶🐱
+    </div>
+
+    <p style="text-align:center;margin-top:10px;">
+
+        Together, we can make
+
+        <br>
+
+        their world better.
+
+    </p>
+
+    <div style="text-align:center;font-size:30px;">
+        💚
+    </div>
+
+</section>
+
+
+        <!-- GEOLOCATION -->
+
+        <section class="location-card">
+
+            <h2>Your Location</h2>
+
+            <button onclick="getLocation()">
+                Get My Location
+            </button>
+
+            <p id="location">
+                Location not found.
+            </p>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- STUDENT REGISTRATION MODAL -->
+
+<div class="modal fade" id="registrationModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Student Registration
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <form id="registrationForm">
+
+                    <div class="mb-3">
+
+                        <label for="pageTitle" class="form-label">
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="pageTitle"
+                            placeholder="Enter title"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="rollNumber" class="form-label">
+                            Roll Number
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="rollNumber"
+                            placeholder="Enter roll number"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="firstName" class="form-label">
+                            First Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="firstName"
+                            placeholder="Enter first name"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="mobileNumber" class="form-label">
+                            Mobile Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            class="form-control"
+                            id="mobileNumber"
+                            placeholder="Enter mobile number"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="email" class="form-label">
+                            Email ID
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            placeholder="Enter email ID"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="address" class="form-label">
+                            Address
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="address"
+                            rows="3"
+                            placeholder="Enter address"
+                            required></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-success w-100">
+                        Register
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap 5 JavaScript -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Your JavaScript -->
+
+<script src="script.js"></script>
+</div> 
+</body>
+
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pet Adoption and Care</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body>
+<header>
+
+    <h1>Pet Adoption and Care</h1>
+
+    <p>Find your perfect furry companion.</p>
+
+    <button
+    type="button"
+    onclick="openRegistration()"
+    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-5 rounded-lg transition duration-300">
+
+    Register Now
+
+</button>
+
+</header>
+
+
+    <main class="layout">
+
+        <div class="left-column">
+
+            <section class="featured-card">
+
+                <div class="featured-text">
+
+                    <h2>Featured Pet</h2>
+
+                    <h3>Maltipoo</h3>
+
+                    <p>
+                        Friendly, playful and full of love. Looking for a
+                        forever home!
+                    </p>
+
+                    <button onclick="showInfo()">Learn More</button>
+
+                    <p id="petInfo"></p>
+
+                </div>
+
+                <div class="featured-image">
+
+                    <img src="dog.jpg" alt="Maltipoo">
+
+                </div>
+
+            </section>
+
+
+            <section class="pets-section">
+
+                <h2>Available Pets</h2>
+
+                <div class="container">
+
+                    <div class="card" draggable="true">
+
+                        <img src="dog.jpg" alt="Maltipoo">
+
+                        <h3>Maltipoo</h3>
+
+                        <p>Age : 2 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="dog2.jpg" alt="Pomeranian">
+
+                        <h3>Pomeranian</h3>
+
+                        <p>Age : 4 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="dog3.jpg" alt="Chow Chow">
+
+                        <h3>Chow Chow</h3>
+
+                        <p>Age : 6 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="dog4.jpg" alt="Shih Tzu">
+
+                        <h3>Shih Tzu</h3>
+
+                        <p> Age : 5 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="cat.jpg" alt="Persian Cat">
+
+                        <h3>Persian Cat</h3>
+
+                        <p> Age : 2 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="cat2.jpg" alt="Grey Cat">
+
+                        <h3>Grey Cat</h3>
+
+                        <p> Age : 3 Months</p>
+
+                    </div>
+
+
+                    <div class="card" draggable="true">
+
+                        <img src="cat3.jpg" alt="British Shorthair">
+
+                        <h3>British Shorthair</h3>
+
+                        <p> Age : 5 Months</p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- DRAG AND DROP -->
+
+            <section class="drag-section">
+
+                <h2>Choose Your Pet</h2>
+
+                <p>Drag a pet card here:</p>
+
+                <div id="dropBox">
+
+                    Drop Pet Here
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="right-column">
+
+
+            <section class="love-card">
+
+                <h2 style="font-size:55px;">💚</h2>
+
+                <h1>#AdoptDontShop</h1>
+
+                <p>
+                    Give homeless pets a loving forever home.
+                </p>
+
+                <br>
+
+            </section>
+
+
+            <section class="wishlist">
+
+                <h2>Adoption Wishlist</h2>
+
+                <input
+                    type="text"
+                    id="petInput"
+                    placeholder="Enter pet name">
+
+                <button onclick="addPet()">
+                    Add
+                </button>
+
+                <ul id="petList">
+
+                </ul>
+
+                <br>
+
+                <div style="text-align:center;font-size:70px;">
+                    🐶🐱
+                </div>
+
+                <p style="text-align:center;margin-top:10px;">
+
+                    Together, we can make
+
+                    <br>
+
+                    their world better.
+
+                </p>
+
+                <div style="text-align:center;font-size:30px;">
+                    💚
+                </div>
+
+            </section>
+
+
+            <!-- GEOLOCATION -->
+
+            <section class="location-card">
+
+                <h2>Your Location</h2>
+
+                <button onclick="getLocation()">
+                    Get My Location
+                </button>
+
+                <p id="location">
+                    Location not found.
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+
+<!-- STUDENT REGISTRATION -->
+
+<div
+    id="registrationBox"
+    class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+    <div class="bg-white rounded-xl shadow-2xl w-11/12 max-w-lg p-6">
+
+        <!-- Heading -->
+
+        <div class="flex justify-between items-center mb-5">
+
+            <h2 class="text-2xl font-bold text-green-700">
+                Student Registration
+            </h2>
+
+            <button
+                type="button"
+                onclick="closeRegistration()"
+                class="text-gray-500 hover:text-red-500 text-2xl font-bold">
+
+                &times;
+
+            </button>
+
+        </div>
+
+
+        <form id="registrationForm">
+
+
+            <!-- Title -->
+
+            <div class="mb-4">
+
+                <label
+                    for="pageTitle"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    Title
+
+                </label>
+
+                <input
+                    type="text"
+                    id="pageTitle"
+                    placeholder="Enter title"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            </div>
+
+
+            <!-- Roll Number -->
+
+            <div class="mb-4">
+
+                <label
+                    for="rollNumber"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    Roll Number
+
+                </label>
+
+                <input
+                    type="text"
+                    id="rollNumber"
+                    placeholder="Enter roll number"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            </div>
+
+
+            <!-- First Name -->
+
+            <div class="mb-4">
+
+                <label
+                    for="firstName"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    First Name
+
+                </label>
+
+                <input
+                    type="text"
+                    id="firstName"
+                    placeholder="Enter first name"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            </div>
+
+
+            <!-- Mobile Number -->
+
+            <div class="mb-4">
+
+                <label
+                    for="mobileNumber"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    Mobile Number
+
+                </label>
+
+                <input
+                    type="tel"
+                    id="mobileNumber"
+                    placeholder="Enter mobile number"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="mb-4">
+
+                <label
+                    for="email"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    Email ID
+
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter email ID"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+            </div>
+
+
+            <!-- Address -->
+
+            <div class="mb-5">
+
+                <label
+                    for="address"
+                    class="block text-gray-700 font-bold mb-2">
+
+                    Address
+
+                </label>
+
+                <textarea
+                    id="address"
+                    rows="3"
+                    placeholder="Enter address"
+                    required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+
+            </div>
+
+
+            <!-- Register Button -->
+
+            <button
+                type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+
+                Register
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
