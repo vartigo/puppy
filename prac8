@@ -1,0 +1,2161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pet Adoption and Care</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- LOGIN SCREEN: SHOWN BEFORE LOGIN -->
+
+    <section class="auth-section" id="loginScreen">
+
+        <h2>Pet Adoption Portal Login</h2>
+
+        <p>Log in to access your authorized portal.</p>
+
+        <form id="authForm">
+
+            <label for="authUsername">Username</label>
+
+            <input
+                type="text"
+                id="authUsername"
+                placeholder="Enter username"
+                autocomplete="username"
+                required>
+
+            <label for="authPassword">Password</label>
+
+            <input
+                type="password"
+                id="authPassword"
+                placeholder="Enter password"
+                autocomplete="current-password"
+                required>
+
+            <button type="submit" id="loginButton">
+                Login
+            </button>
+
+        </form>
+
+        <p id="authMessage" role="status" aria-live="polite">
+            Please log in to continue.
+        </p>
+
+    </section>
+
+
+    <!-- ENTIRE WEBSITE: HIDDEN UNTIL LOGIN -->
+
+    <div id="appShell" hidden>
+
+        <header>
+
+            <h1>Pet Adoption and Care</h1>
+
+            <p>Find your perfect furry companion.</p>
+
+            <button
+                type="button"
+                class="btn btn-success"
+                data-bs-toggle="modal"
+                data-bs-target="#registrationModal">
+
+                Register Now
+
+            </button>
+
+        </header>
+
+
+        <main class="layout">
+
+            <!-- LEFT COLUMN -->
+
+            <div class="left-column">
+
+
+                <!-- FEATURED PET -->
+
+                <section class="featured-card">
+
+                    <div class="featured-text">
+
+                        <h2>Featured Pet</h2>
+
+                        <h3>Maltipoo</h3>
+
+                        <p>
+                            Friendly, playful and full of love.
+                            Looking for a forever home!
+                        </p>
+
+                        <button type="button" onclick="showInfo()">
+                            Learn More
+                        </button>
+
+                        <p id="petInfo"></p>
+
+                    </div>
+
+                    <div class="featured-image">
+
+                        <img src="dog.jpg" alt="Maltipoo">
+
+                    </div>
+
+                </section>
+
+
+                <!-- AVAILABLE PETS: CONNECTED TO MYSQL DATABASE -->
+
+                <section class="pets-section" id="petsSection">
+
+                    <div class="pets-heading">
+
+                        <div>
+
+                            <h2>Available Pets</h2>
+
+                            <p>Find your next furry companion.</p>
+
+                        </div>
+
+                        <button type="button" id="refreshPets">
+                            Refresh Pets
+                        </button>
+
+                    </div>
+
+                    <p
+                        id="petDbMessage"
+                        role="status"
+                        aria-live="polite">
+                    </p>
+
+
+                    <!-- ADMIN-ONLY ADD PET FORM -->
+
+                    <form id="dbPetForm" hidden enctype="multipart/form-data">
+
+    <h3>Add a New Pet</h3>
+
+    <div class="db-form-grid">
+
+        <div>
+            <label for="dbPetName">Pet Name</label>
+            <input
+                type="text"
+                id="dbPetName"
+                maxlength="100"
+                placeholder="e.g. Coco"
+                required>
+        </div>
+
+        <div>
+            <label for="dbPetSpecies">Species / Breed</label>
+            <input
+                type="text"
+                id="dbPetSpecies"
+                maxlength="50"
+                placeholder="e.g. Maltipoo"
+                required>
+        </div>
+
+        <div>
+            <label for="dbPetAge">Age (months)</label>
+            <input
+                type="number"
+                id="dbPetAge"
+                min="0"
+                max="600"
+                required>
+        </div>
+
+        <div class="pet-photo-field">
+            <label for="dbPetPhoto">Pet Photo</label>
+            <input
+                type="file"
+                id="dbPetPhoto"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                required>
+
+            <img
+                id="petPhotoPreview"
+                alt="Selected pet photo preview"
+                hidden>
+        </div>
+
+    </div>
+
+    <button type="submit">Add Pet</button>
+
+</form>
+
+
+                    <!-- PET CARDS ARE LOADED FROM MYSQL -->
+
+                    <div id="availablePetsList" class="container">
+
+                        Loading pets...
+
+                    </div>
+
+                </section>
+
+
+                <!-- DRAG AND DROP -->
+
+                <section class="drag-section">
+
+                    <h2>Choose Your Pet</h2>
+
+                    <p>Drag an available pet here:</p>
+
+                    <div id="dropBox">
+                        Drop Pet Here
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- RIGHT COLUMN -->
+
+            <div class="right-column">
+
+
+                <!-- ADOPTION MESSAGE -->
+
+                <section class="love-card">
+
+                    <h2 style="font-size:55px;">💚</h2>
+
+                    <h1>#AdoptDontShop</h1>
+
+                    <p>
+                        Give homeless pets a loving forever home.
+                    </p>
+
+                    <br>
+
+                </section>
+
+
+                <!-- ADOPTION WISHLIST -->
+
+                <section class="wishlist">
+
+                    <h2>Adoption Wishlist</h2>
+
+                    <input
+                        type="text"
+                        id="petInput"
+                        placeholder="Enter pet name">
+
+                    <button type="button" onclick="addPet()">
+                        Add
+                    </button>
+
+                    <ul id="petList"></ul>
+
+                    <br>
+
+                    <div style="text-align:center;font-size:70px;">
+                        🐶🐱
+                    </div>
+
+                    <p style="text-align:center;margin-top:10px;">
+
+                        Together, we can make
+
+                        <br>
+
+                        their world better.
+
+                    </p>
+
+                    <div style="text-align:center;font-size:30px;">
+                        💚
+                    </div>
+
+                </section>
+
+
+                <!-- GEOLOCATION -->
+
+                <section class="location-card">
+
+                    <h2>Your Location</h2>
+
+                    <button type="button" onclick="getLocation()">
+                        Get My Location
+                    </button>
+
+                    <p id="location">
+                        Location not found.
+                    </p>
+
+                </section>
+
+            </div>
+
+        </main>
+
+
+        <!-- STUDENT REGISTRATION MODAL -->
+
+        <div
+            class="modal fade"
+            id="registrationModal"
+            tabindex="-1"
+            aria-labelledby="registrationModalTitle"
+            aria-hidden="true">
+
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <h5
+                            class="modal-title"
+                            id="registrationModalTitle">
+
+                            Student Registration
+
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                        </button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <form id="registrationForm">
+
+                            <div class="mb-3">
+
+                                <label for="pageTitle" class="form-label">
+                                    Title
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="pageTitle"
+                                    placeholder="Enter title"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label for="rollNumber" class="form-label">
+                                    Roll Number
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="rollNumber"
+                                    placeholder="Enter roll number"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label for="firstName" class="form-label">
+                                    First Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="firstName"
+                                    placeholder="Enter first name"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label for="mobileNumber" class="form-label">
+                                    Mobile Number
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    class="form-control"
+                                    id="mobileNumber"
+                                    placeholder="Enter mobile number"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label for="email" class="form-label">
+                                    Email ID
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    placeholder="Enter email ID"
+                                    required>
+
+                            </div>
+
+
+                            <div class="mb-3">
+
+                                <label for="address" class="form-label">
+                                    Address
+                                </label>
+
+                                <textarea
+                                    class="form-control"
+                                    id="address"
+                                    rows="3"
+                                    placeholder="Enter address"
+                                    required></textarea>
+
+                            </div>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-success w-100">
+
+                                Register
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+/* PET ADOPTION WEBSITE */
+
+// Authentication state exists only for the current page session.
+let loggedInCredentials = null;
+let currentRole = null;
+
+const loginScreen = document.getElementById("loginScreen");
+const appShell = document.getElementById("appShell");
+const authForm = document.getElementById("authForm");
+const authMessage = document.getElementById("authMessage");
+const loginButton = document.getElementById("loginButton");
+
+const petForm = document.getElementById("dbPetForm");
+const petListContainer = document.getElementById("availablePetsList");
+const petDbMessage = document.getElementById("petDbMessage");
+
+// Always attach credentials to protected API requests.
+function apiFetch(url, options = {}) {
+    if (!loggedInCredentials) {
+        throw new Error("Please log in first.");
+    }
+
+    const headers = {
+        ...(options.headers || {}),
+        username: loggedInCredentials.username,
+        password: loggedInCredentials.password
+    };
+
+    return fetch(url, { ...options, headers });
+}
+
+async function readResponse(response) {
+    const result = await response.json();
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            logout("Your login is no longer valid. Please log in again.");
+        }
+
+        throw new Error(
+            result.error || result.message || "The request failed."
+        );
+    }
+
+    return result;
+}
+
+// Login
+authForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const username =
+        document.getElementById("authUsername").value.trim();
+
+    const password =
+        document.getElementById("authPassword").value;
+
+    loginButton.disabled = true;
+    authMessage.textContent = "Checking login details...";
+
+    // Keep the website hidden while credentials are checked.
+    loggedInCredentials = null;
+    currentRole = null;
+    appShell.hidden = true;
+
+    try {
+        const response = await fetch("/api/profile", {
+            headers: { username, password }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || "Login failed.");
+        }
+
+        loggedInCredentials = { username, password };
+        currentRole = result.role;
+
+        // Reveal the website only after successful authentication.
+        loginScreen.hidden = true;
+        appShell.hidden = false;
+
+        // Admins can manage pets; regular users can only view them.
+        petForm.hidden = currentRole !== "admin";
+
+        const registerButton = document.querySelector(
+            '[data-bs-target="#registrationModal"]'
+        );
+
+        if (registerButton) {
+            registerButton.hidden = currentRole !== "admin";
+        }
+
+        await loadDatabasePets();
+
+    } catch (error) {
+        loggedInCredentials = null;
+        currentRole = null;
+
+        loginScreen.hidden = false;
+        appShell.hidden = true;
+
+        authMessage.textContent = error.message;
+    } finally {
+        loginButton.disabled = false;
+    }
+});
+
+// Logout
+function logout(message = "You have logged out.") {
+    loggedInCredentials = null;
+    currentRole = null;
+
+    authForm.reset();
+    appShell.hidden = true;
+    loginScreen.hidden = false;
+    petForm.hidden = true;
+
+    authMessage.textContent = message;
+    petDbMessage.textContent = "";
+    petListContainer.replaceChildren();
+
+    // Also close the registration modal if it is open.
+    const modalElement = document.getElementById("registrationModal");
+
+    if (modalElement && window.bootstrap) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+    }
+}
+
+// Add a logout button to the website header.
+const logoutButton = document.createElement("button");
+logoutButton.type = "button";
+logoutButton.id = "websiteLogout";
+logoutButton.textContent = "Logout";
+logoutButton.addEventListener("click", () => logout());
+
+document.querySelector("#appShell header").appendChild(logoutButton);
+
+// Map existing local images to pet species.
+function getPetImage(pet) {
+    const text = (pet.name + " " + pet.species).toLowerCase();
+
+    if (text.includes("persian")) return "cat.jpg";
+    if (text.includes("grey cat") || text.includes("gray cat")) {
+        return "cat2.jpg";
+    }
+    if (text.includes("british shorthair")) return "cat3.jpg";
+    if (text.includes("cat")) return "cat.jpg";
+    if (text.includes("pomeranian")) return "dog2.jpg";
+    if (text.includes("chow chow")) return "dog3.jpg";
+    if (text.includes("shih tzu")) return "dog4.jpg";
+    if (text.includes("dog") || text.includes("maltipoo")) {
+        return "dog.jpg";
+    }
+
+    return text.includes("kitten") ? "cat.jpg" : "dog.jpg";
+}
+
+// Load pets from the MySQL database into Available Pets.
+async function loadDatabasePets() {
+    if (!loggedInCredentials) return;
+
+    petListContainer.textContent = "Loading pets...";
+    petDbMessage.textContent = "";
+
+    try {
+        const response = await apiFetch("/api/pets");
+        const pets = await readResponse(response);
+
+        petListContainer.replaceChildren();
+
+        // Users see available pets only. Admins can also see adopted pets.
+        const visiblePets = currentRole === "admin"
+            ? pets
+            : pets.filter(pet => pet.status === "Available");
+
+        if (visiblePets.length === 0) {
+            petListContainer.textContent = currentRole === "admin"
+                ? "No pet records yet. Add your first pet above."
+                : "No pets are currently available for adoption.";
+            return;
+        }
+
+        visiblePets.forEach(pet => {
+            const card = document.createElement("article");
+            card.className = "card";
+            card.draggable = pet.status === "Available";
+
+            const image = document.createElement("img");
+            image.src = getPetImage(pet);
+            image.alt = pet.name;
+            image.loading = "lazy";
+
+            const heading = document.createElement("h3");
+            heading.textContent = pet.name;
+
+            const species = document.createElement("p");
+            species.textContent = "Species / Breed: " + pet.species;
+
+            const age = document.createElement("p");
+            age.textContent = "Age: " + pet.age_months + " months";
+
+            const status = document.createElement("p");
+            status.textContent = "Status: " + pet.status;
+            status.className = pet.status === "Available"
+                ? "pet-status available"
+                : "pet-status adopted";
+
+            card.append(image, heading, species, age, status);
+
+            // Only admins get management controls.
+            if (currentRole === "admin") {
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.textContent = "Edit Pet";
+                editButton.addEventListener("click", () => editPet(pet));
+
+                const statusButton = document.createElement("button");
+                statusButton.type = "button";
+                statusButton.textContent = pet.status === "Available"
+                    ? "Mark Adopted"
+                    : "Mark Available";
+
+                statusButton.addEventListener("click", () => {
+                    updatePet(pet, {
+                        name: pet.name,
+                        species: pet.species,
+                        age_months: pet.age_months,
+                        status: pet.status === "Available"
+                            ? "Adopted"
+                            : "Available"
+                    });
+                });
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.textContent = "Delete Pet";
+                deleteButton.className = "delete-pet";
+
+                deleteButton.addEventListener("click", async () => {
+                    if (!confirm("Permanently delete " + pet.name + "?")) {
+                        return;
+                    }
+
+                    try {
+                        const response = await apiFetch(
+                            "/api/pets/" + pet.id,
+                            { method: "DELETE" }
+                        );
+
+                        const result = await readResponse(response);
+                        petDbMessage.textContent = result.message;
+                        await loadDatabasePets();
+                    } catch (error) {
+                        petDbMessage.textContent = error.message;
+                    }
+                });
+
+                card.append(editButton, statusButton, deleteButton);
+            }
+
+            card.addEventListener("dragstart", event => {
+                if (pet.status !== "Available") {
+                    event.preventDefault();
+                    return;
+                }
+
+                event.dataTransfer.setData("text/plain", pet.name);
+            });
+
+            petListContainer.appendChild(card);
+        });
+
+    } catch (error) {
+        petListContainer.textContent = error.message;
+    }
+}
+
+// Admin: edit an existing pet's details.
+async function editPet(pet) {
+    const name = prompt("Pet name:", pet.name);
+    if (name === null) return;
+
+    const species = prompt("Species / breed:", pet.species);
+    if (species === null) return;
+
+    const ageInput = prompt("Age in months:", pet.age_months);
+    if (ageInput === null) return;
+
+    const age = Number(ageInput);
+
+    if (
+        !name.trim() ||
+        !species.trim() ||
+        !Number.isInteger(age) ||
+        age < 0 ||
+        age > 600
+    ) {
+        petDbMessage.textContent =
+            "Enter a valid name, species and age between 0 and 600.";
+        return;
+    }
+
+    await updatePet(pet, {
+        name: name.trim(),
+        species: species.trim(),
+        age_months: age,
+        status: pet.status
+    });
+}
+
+// Admin: update a pet in MySQL.
+async function updatePet(pet, details) {
+    try {
+        const response = await apiFetch("/api/pets/" + pet.id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(details)
+        });
+
+        const result = await readResponse(response);
+        petDbMessage.textContent = result.message;
+        await loadDatabasePets();
+    } catch (error) {
+        petDbMessage.textContent = error.message;
+    }
+}
+
+// Admin: add a pet to MySQL.
+petForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    if (currentRole !== "admin") {
+        petDbMessage.textContent = "Only administrators can add pets.";
+        return;
+    }
+
+    const name = document.getElementById("dbPetName").value.trim();
+    const species = document.getElementById("dbPetSpecies").value.trim();
+    const age = Number(document.getElementById("dbPetAge").value);
+
+    try {
+        const response = await apiFetch("/api/pets", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name,
+                species,
+                age_months: age
+            })
+        });
+
+        const result = await readResponse(response);
+        petDbMessage.textContent =
+            result.message + " Pet ID: " + result.id;
+
+        petForm.reset();
+        await loadDatabasePets();
+    } catch (error) {
+        petDbMessage.textContent = error.message;
+    }
+});
+
+document.getElementById("refreshPets").addEventListener(
+    "click",
+    loadDatabasePets
+);
+
+/* EXISTING WEBSITE FEATURES */
+
+// Featured pet information
+function showInfo() {
+    const info = document.getElementById("petInfo");
+
+    info.textContent = info.textContent
+        ? ""
+        : "Maltipoos are friendly, intelligent and playful dogs. " +
+          "They are affectionate companions and love spending time " +
+          "with their families. Take him home with you today!";
+}
+
+// Adoption wishlist
+function addPet() {
+    const input = document.getElementById("petInput");
+    const pet = input.value.trim();
+
+    if (!pet) {
+        alert("Please enter a pet name.");
+        return;
+    }
+
+    const li = document.createElement("li");
+    const name = document.createElement("span");
+    name.textContent = pet;
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "remove";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", () => {
+        li.remove();
+        savePets();
+    });
+
+    li.append(name, remove);
+    document.getElementById("petList").appendChild(li);
+    input.value = "";
+    savePets();
+}
+
+function savePets() {
+    const pets = Array.from(
+        document.querySelectorAll("#petList li span")
+    ).map(span => span.textContent);
+
+    localStorage.setItem("pets", JSON.stringify(pets));
+}
+
+function loadPets() {
+    let pets = [];
+
+    try {
+        pets = JSON.parse(localStorage.getItem("pets")) || [];
+    } catch {
+        pets = [];
+    }
+
+    document.getElementById("petList").replaceChildren();
+
+    pets.forEach(pet => {
+        const input = document.getElementById("petInput");
+        input.value = pet;
+        addPet();
+    });
+
+    document.getElementById("petInput").value = "";
+}
+
+// Location
+function getLocation() {
+    if (!navigator.geolocation) {
+        document.getElementById("location").textContent =
+            "Geolocation is not supported.";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        showPosition,
+        () => {
+            document.getElementById("location").textContent =
+                "Unable to retrieve your location.";
+        }
+    );
+}
+
+function showPosition(position) {
+    document.getElementById("location").textContent =
+        "Latitude: " + position.coords.latitude +
+        " | Longitude: " + position.coords.longitude;
+}
+
+// Drag and drop target
+const dropBox = document.getElementById("dropBox");
+
+if (dropBox) {
+    dropBox.addEventListener("dragover", event => {
+        event.preventDefault();
+    });
+
+    dropBox.addEventListener("drop", event => {
+        event.preventDefault();
+
+        const petName = event.dataTransfer.getData("text/plain");
+        if (!petName) return;
+
+        dropBox.textContent = "Selected pet: " + petName;
+    });
+}
+
+// Student registration form
+document.getElementById("registrationForm").addEventListener(
+    "submit",
+    function(event) {
+        event.preventDefault();
+
+        alert("Registration successful!");
+
+        const modal = bootstrap.Modal.getInstance(
+            document.getElementById("registrationModal")
+        );
+
+        if (modal) modal.hide();
+        this.reset();
+    }
+);
+
+// Load wishlist only. Do not fetch the pet database before login.
+loadPets();
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT FILES -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    color:#333;
+    line-height:1.6;
+
+    background-image:url("background.jpg");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+
+header{
+
+    text-align:center;
+    padding:40px 20px;
+    color:#1d4f22;
+}
+
+
+header h1{
+
+    font-size:3rem;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
+
+header p{
+
+    font-size:1.3rem;
+}
+
+
+.layout{
+
+    width:92%;
+    max-width:1450px;
+
+    margin:auto;
+
+    display:grid;
+
+    grid-template-columns:2.4fr 1fr;
+
+    gap:25px;
+
+    padding-bottom:40px;
+}
+
+
+.left-column{
+
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+
+.right-column{
+
+    display:flex;
+    flex-direction:column;
+    gap:25px;
+}
+
+
+.featured-card,
+.pets-section,
+.love-card,
+.wishlist,
+.drag-section,
+.location-card{
+
+    background:rgba(255,255,255,.82);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+
+.featured-card{
+
+    display:grid;
+
+    grid-template-columns:1fr 1.4fr;
+
+    overflow:hidden;
+}
+
+
+.featured-text{
+
+    padding:35px;
+}
+
+
+.featured-text h2{
+
+    color:#2E7D32;
+    margin-bottom:25px;
+}
+
+
+.featured-text h3{
+
+    font-size:2rem;
+
+    color:#2E7D32;
+
+    margin-bottom:15px;
+}
+
+
+.featured-text p{
+
+    margin-bottom:30px;
+    color:#555;
+}
+
+
+.featured-text button{
+
+    background:#4CAF50;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 25px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+
+.featured-text button:hover{
+
+    background:#388E3C;
+}
+
+
+.featured-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+}
+
+
+/* RIGHT TOP CARD */
+
+.love-card{
+    text-align:center;
+    padding:20px;
+}
+
+.love-card h2{
+    font-size:35px;
+}
+
+.love-card h1{
+    color:#2E7D32;
+    margin:8px 0;
+    font-size:1.5rem;
+}
+
+.love-card p{
+    color:#555;
+}
+
+
+/* PETS */
+
+.pets-section{
+
+    padding:25px;
+}
+
+
+.pets-section h2{
+
+    color:#2E7D32;
+
+    margin-bottom:25px;
+}
+
+
+.container{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+}
+
+
+.card{
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    text-align:center;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.12);
+
+    transition:.3s;
+
+    cursor:grab;
+}
+
+
+.card:hover{
+
+    transform:translateY(-8px);
+}
+
+
+.card img{
+
+    width:100%;
+
+    height:170px;
+
+    object-fit:contain;
+}
+
+
+.card h3{
+
+    color:#2E7D32;
+
+    margin:12px 0 5px;
+}
+
+
+.card p{
+
+    margin-bottom:15px;
+    color:#666;
+}
+
+
+/* WISHLIST */
+
+.wishlist{
+
+    padding:30px;
+}
+
+
+.wishlist h2{
+
+    color:#2E7D32;
+
+    margin-bottom:20px;
+}
+
+
+.wishlist input{
+
+    width:65%;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    border:1px solid #ccc;
+}
+
+
+.wishlist button{
+
+    padding:12px 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#4CAF50;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+
+.wishlist button:hover{
+
+    background:#388E3C;
+}
+
+
+#petList{
+
+    list-style:none;
+
+    margin-top:25px;
+}
+
+
+#petList li{
+    background:#f8f8f8;
+    margin:12px 0;
+    padding:12px;
+    border-radius:8px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+
+    overflow-wrap:anywhere;
+}
+
+
+.remove{
+    background:#d32f2f !important;
+    color:white;
+    border:none;
+    padding:5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+
+    flex-shrink:0;
+}
+
+
+
+.drag-section{
+
+    padding:30px;
+
+    text-align:center;
+}
+
+
+.drag-section h2{
+
+    color:#2E7D32;
+
+    margin-bottom:10px;
+}
+
+
+#dropBox{
+
+    margin-top:20px;
+
+    min-height:250px;
+
+    border:3px dashed #4CAF50;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:#f5fff5;
+
+}
+#dropBox .card{
+
+    width:220px;
+
+    cursor:default;
+
+    transform:none;
+
+}
+
+
+#dropBox .card:hover{
+
+    transform:none;
+
+}
+
+
+#dropBox .card img{
+
+    width:100%;
+
+    height:170px;
+
+    object-fit:contain;
+
+}
+#dropBox img{
+    width:150px;
+    height:150px;
+    object-fit:contain;
+}
+
+
+.location-card{
+
+    padding:30px;
+
+    text-align:center;
+}
+
+
+.location-card h2{
+
+    color:#2E7D32;
+
+    margin-bottom:20px;
+}
+
+
+.location-card button{
+
+    padding:12px 20px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#4CAF50;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+
+.location-card button:hover{
+
+    background:#388E3C;
+}
+
+
+#location{
+
+    margin-top:20px;
+
+    color:#555;
+}
+
+
+
+@media screen and (max-width:1000px){
+
+    .layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .container{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .featured-card{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .featured-image img{
+
+        height:350px;
+
+    }
+
+}
+
+
+@media screen and (max-width:600px){
+
+    .container{
+
+        grid-template-columns:1fr;
+
+    }
+
+    header h1{
+
+        font-size:2rem;
+
+    }
+
+    .wishlist input{
+
+        width:100%;
+
+        margin-bottom:10px;
+
+    }
+
+    .wishlist button{
+
+        width:100%;
+
+        margin-left:0;
+
+    }
+
+}
+
+
+/* MYSQL PET ADOPTION DATABASE */
+
+.database-section {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.database-section h2,
+.database-section h3 {
+    color: #2E7D32;
+    margin-bottom: 15px;
+}
+
+.db-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.db-form-grid label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.db-form-grid input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.database-section button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    margin: 5px 5px 5px 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.database-section button:hover {
+    background: #388E3C;
+}
+
+#dbMessage {
+    margin: 15px 0;
+    overflow-wrap: anywhere;
+}
+
+.db-pet-record {
+    background: white;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    margin-top: 12px;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+.db-pet-record p {
+    margin: 5px 0;
+}
+
+@media screen and (max-width: 600px) {
+    .db-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .database-section {
+        padding: 20px;
+    }
+}
+
+/* PRACTICAL 9: LOGIN SECTION */
+
+.auth-section {
+    width: 92%;
+    max-width: 650px;
+    margin: 0 auto 30px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.auth-section h2 {
+    color: #2E7D32;
+    margin-bottom: 10px;
+}
+
+.auth-section label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.auth-section input {
+    display: block;
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.auth-section button {
+    margin: 12px 6px 0 0;
+    padding: 10px 16px;
+    color: white;
+    background: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.auth-section button:hover {
+    background: #388E3C;
+}
+
+#authMessage {
+    margin-top: 15px;
+    overflow-wrap: anywhere;
+}
+
+#authResult {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin-top: 12px;
+}
+
+/* Keep hidden elements hidden, regardless of other styles. */
+[hidden] {
+    display: none !important;
+}
+
+/* Login screen */
+.auth-section {
+    width: 92%;
+    max-width: 600px;
+    margin: 8vh auto;
+    padding: 35px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.auth-section h2,
+.pets-section h2,
+.pets-section h3 {
+    color: #2E7D32;
+}
+
+.auth-section label,
+#dbPetForm label {
+    display: block;
+    margin: 12px 0 5px;
+    font-weight: bold;
+}
+
+.auth-section input,
+#dbPetForm input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.auth-section button,
+.pets-section button,
+#websiteLogout {
+    padding: 10px 15px;
+    margin: 8px 5px 5px 0;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.auth-section button:hover,
+.pets-section button:hover,
+#websiteLogout:hover {
+    background: #388E3C;
+}
+
+.auth-section button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+#authMessage,
+#petDbMessage {
+    margin-top: 15px;
+    overflow-wrap: anywhere;
+}
+
+/* Website header and logout */
+header {
+    position: relative;
+}
+
+#websiteLogout {
+    margin-top: 15px;
+}
+
+/* Pet adoption database shown as Available Pets */
+.pets-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.pets-heading p {
+    color: #555;
+}
+
+#dbPetForm {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(245, 255, 245, 0.95);
+    border: 1px solid #c8e6c9;
+    border-radius: 12px;
+}
+
+.db-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+#availablePetsList .card {
+    min-width: 0;
+    padding-bottom: 15px;
+}
+
+#availablePetsList .card img {
+    width: 100%;
+    height: 170px;
+    object-fit: contain;
+}
+
+#availablePetsList .card h3,
+#availablePetsList .card p {
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow-wrap: anywhere;
+}
+
+.pet-status {
+    font-weight: bold;
+}
+
+.pet-status.available {
+    color: #2E7D32;
+}
+
+.pet-status.adopted {
+    color: #a94442;
+}
+
+#availablePetsList button {
+    margin: 5px 10px;
+}
+
+#availablePetsList .delete-pet {
+    background: #c62828;
+}
+
+#availablePetsList .delete-pet:hover {
+    background: #a51d1d;
+}
+
+@media screen and (max-width: 600px) {
+    .auth-section {
+        margin: 25px auto;
+        padding: 22px;
+    }
+
+    .db-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pets-heading {
+        align-items: flex-start;
+    }
+}
+
+
+
+const express = require("express");
+const mysql = require("mysql");
+const path = require("path");
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+
+// Serve static assets, but the HTML itself is served explicitly below.
+app.use(express.static(__dirname, { index: false }));
+
+const users = [
+    { username: "admin", password: "1234", role: "admin" },
+    { username: "student", password: "1234", role: "user" }
+];
+
+const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: ""
+});
+
+let databaseReady = false;
+
+// Authentication from request headers.
+function authenticate(req, res, next) {
+    const username = req.headers.username;
+    const password = req.headers.password;
+
+    const user = users.find(
+        u => u.username === username && u.password === password
+    );
+
+    if (!user) {
+        return res.status(401).json({
+            message: "Authentication failed. Please log in."
+        });
+    }
+
+    req.authenticatedUser = {
+        username: user.username,
+        role: user.role
+    };
+
+    next();
+}
+
+// Admin-only authorization.
+function requireAdmin(req, res, next) {
+    if (req.authenticatedUser.role !== "admin") {
+        return res.status(403).json({
+            message: "Access denied. Admin only."
+        });
+    }
+
+    next();
+}
+
+// Serve the login page.
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Login/profile verification.
+app.get("/api/profile", authenticate, (req, res) => {
+    res.json({
+        message: "Login successful",
+        user: req.authenticatedUser.username,
+        role: req.authenticatedUser.role
+    });
+});
+
+// Optional practical/exercise routes.
+app.get("/admin", authenticate, requireAdmin, (req, res) => {
+    res.json({
+        message: "Welcome Admin!",
+        user: req.authenticatedUser.username,
+        role: req.authenticatedUser.role
+    });
+});
+
+app.get("/user", authenticate, (req, res) => {
+    res.json({
+        message: "Login successful",
+        user: req.authenticatedUser.username,
+        role: req.authenticatedUser.role
+    });
+});
+
+// Check database availability for API requests.
+function requireDatabase(req, res, next) {
+    if (!databaseReady) {
+        return res.status(503).json({
+            error: "The pet database is not ready yet."
+        });
+    }
+
+    next();
+}
+
+// Read pets: any authenticated user can view the database.
+app.get("/api/pets", authenticate, requireDatabase, (req, res) => {
+    connection.query(
+        "SELECT * FROM pets ORDER BY id DESC",
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "Could not load pets."
+                });
+            }
+
+            res.json(results);
+        }
+    );
+});
+
+// Add a pet: administrators only.
+app.post(
+    "/api/pets",
+    authenticate,
+    requireAdmin,
+    requireDatabase,
+    (req, res) => {
+        const { name, species, age_months } = req.body;
+
+        if (
+            typeof name !== "string" ||
+            !name.trim() ||
+            typeof species !== "string" ||
+            !species.trim() ||
+            !Number.isInteger(age_months) ||
+            age_months < 0 ||
+            age_months > 600
+        ) {
+            return res.status(400).json({
+                error: "Enter a valid name, species and age (0–600 months)."
+            });
+        }
+
+        connection.query(
+            "INSERT INTO pets (name, species, age_months) VALUES (?, ?, ?)",
+            [name.trim(), species.trim(), age_months],
+            (err, result) => {
+                if (err) {
+                    return res.status(500).json({
+                        error: "Could not add the pet."
+                    });
+                }
+
+                res.status(201).json({
+                    message: "Pet added successfully.",
+                    id: result.insertId
+                });
+            }
+        );
+    }
+);
+
+// Edit pet details and status: administrators only.
+app.put(
+    "/api/pets/:id",
+    authenticate,
+    requireAdmin,
+    requireDatabase,
+    (req, res) => {
+        const id = Number(req.params.id);
+        const { name, species, age_months, status } = req.body;
+
+        if (
+            !Number.isInteger(id) ||
+            id < 1 ||
+            typeof name !== "string" ||
+            !name.trim() ||
+            typeof species !== "string" ||
+            !species.trim() ||
+            !Number.isInteger(age_months) ||
+            age_months < 0 ||
+            age_months > 600 ||
+            !["Available", "Adopted"].includes(status)
+        ) {
+            return res.status(400).json({
+                error: "Enter valid pet details and adoption status."
+            });
+        }
+
+        connection.query(
+            `UPDATE pets
+             SET name = ?, species = ?, age_months = ?, status = ?
+             WHERE id = ?`,
+            [name.trim(), species.trim(), age_months, status, id],
+            (err, result) => {
+                if (err) {
+                    return res.status(500).json({
+                        error: "Could not update the pet."
+                    });
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        error: "Pet not found."
+                    });
+                }
+
+                res.json({ message: "Pet updated successfully." });
+            }
+        );
+    }
+);
+
+// Delete a pet: administrators only.
+app.delete(
+    "/api/pets/:id",
+    authenticate,
+    requireAdmin,
+    requireDatabase,
+    (req, res) => {
+        const id = Number(req.params.id);
+
+        if (!Number.isInteger(id) || id < 1) {
+            return res.status(400).json({ error: "Invalid pet ID." });
+        }
+
+        connection.query(
+            "DELETE FROM pets WHERE id = ?",
+            [id],
+            (err, result) => {
+                if (err) {
+                    return res.status(500).json({
+                        error: "Could not delete the pet."
+                    });
+                }
+
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({
+                        error: "Pet not found."
+                    });
+                }
+
+                res.json({ message: "Pet deleted successfully." });
+            }
+        );
+    }
+);
+
+// Database setup and server startup.
+connection.connect(err => {
+    if (err) {
+        console.error("MySQL connection failed:", err.message);
+        process.exit(1);
+    }
+
+    console.log("Connected to MySQL.");
+
+    connection.query(
+        "CREATE DATABASE IF NOT EXISTS pet_adoption",
+        err => {
+            if (err) {
+                console.error("Database creation failed:", err.message);
+                process.exit(1);
+            }
+
+            connection.query("USE pet_adoption", err => {
+                if (err) {
+                    console.error("Could not select database:", err.message);
+                    process.exit(1);
+                }
+
+                connection.query(
+                    `CREATE TABLE IF NOT EXISTS pets (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(100) NOT NULL,
+                        species VARCHAR(50) NOT NULL,
+                        age_months INT NOT NULL,
+                        status VARCHAR(30) DEFAULT 'Available'
+                    )`,
+                    err => {
+                        if (err) {
+                            console.error("Table creation failed:", err.message);
+                            process.exit(1);
+                        }
+
+                        // Seed the original example pets only if the table
+                        // is empty. Existing database records are preserved.
+                        connection.query(
+                            "SELECT COUNT(*) AS total FROM pets",
+                            (err, rows) => {
+                                if (err) {
+                                    console.error(err.message);
+                                    process.exit(1);
+                                }
+
+                                const startServer = () => {
+                                    databaseReady = true;
+
+                                    app.listen(PORT, () => {
+                                        console.log(
+                                            `Website running at http://localhost:${PORT}`
+                                        );
+                                    });
+                                };
+
+                                if (rows[0].total > 0) {
+                                    return startServer();
+                                }
+
+                                const starterPets = [
+                                    ["Maltipoo", "Dog", 2],
+                                    ["Pomeranian", "Dog", 4],
+                                    ["Chow Chow", "Dog", 6],
+                                    ["Shih Tzu", "Dog", 5],
+                                    ["Persian Cat", "Cat", 2],
+                                    ["Grey Cat", "Cat", 3],
+                                    ["British Shorthair", "Cat", 5]
+                                ];
+
+                                connection.query(
+                                    `INSERT INTO pets
+                                     (name, species, age_months)
+                                     VALUES ?`,
+                                    [starterPets],
+                                    err => {
+                                        if (err) {
+                                            console.error(
+                                                "Pet seeding failed:",
+                                                err.message
+                                            );
+                                            process.exit(1);
+                                        }
+
+                                        startServer();
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
+            });
+        }
+    );
+});
+
+process.on("SIGINT", () => {
+    connection.end(() => process.exit(0));
+});
+
+
+
