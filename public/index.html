@@ -1,0 +1,362 @@
+<!doctype html>
+<!-- =====================================================================
+  index.html — MAIN PAGE: Vue 3 + Bootstrap 5   (open http://localhost:3000)
+  Covers: Practical 3 (responsive), 4 (Geolocation / Local Storage / Drag & Drop),
+          5 (Bootstrap), 7 (Vue 3 directives), 9 (login + roles)
+
+  LOGIN:  admin / 1234  (can delete)      student / 1234  (cannot delete)
+
+  WHERE TO EDIT FOR YOUR EXAM TOPIC
+    - ALL titles / texts / photos / categories  -> the SITE object at the top of app.js
+    - the form inputs                           -> search this file for  "FORM"
+    - what each card shows                      -> search for  "CARD"
+  Every placeholder in the page comes from {{ site.something }} so you rarely
+  touch this html at all.
+===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Practical 3A: viewport meta makes the page responsive on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[ Your Site Title ]</title>   <!-- the real title is set from SITE.title in app.js -->
+
+  <!-- Practical 5A: Bootstrap via CDN (needs internet) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Practical 5B OFFLINE: download the files, put them in public/vendor/ and use:
+       <link rel="stylesheet" href="vendor/bootstrap.min.css">
+       <script src="vendor/bootstrap.bundle.min.js"></script>
+       <script src="vendor/vue.global.js"></script>  -->
+
+  <!-- your own styles (hero, photo boxes, card grid, media queries) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <!-- =================================================================
+       A. LOGIN SCREEN  (shown until the user logs in — Practical 9)
+       ================================================================= -->
+  <div v-if="!user" class="login-wrap">
+    <div class="card login-card p-4 shadow-lg">
+      <div class="text-center mb-3">
+        <!-- LOGO placeholder: SITE.logo (image) or SITE.logoEmoji -->
+        <img v-if="site.logo" :src="site.logo" class="logo-img mb-2" alt="logo">
+        <div v-else style="font-size:2.5rem">{{ site.logoEmoji }}</div>
+        <h4 class="mb-0">{{ site.title }}</h4>
+        <small class="text-muted">{{ site.tagline }}</small>
+      </div>
+
+      <!-- v-model = two-way binding between input and data -->
+      <input class="form-control mb-2" v-model="login.username" placeholder="Username (admin / student)">
+      <input class="form-control mb-3" v-model="login.password" type="password" placeholder="Password (1234)"
+             @keyup.enter="doLogin">
+      <button class="btn btn-primary w-100" @click="doLogin">Login</button>
+      <div v-if="message" class="alert alert-danger mt-3 mb-0">{{ message }}</div>
+    </div>
+  </div>
+
+  <!-- =================================================================
+       B. THE WEBSITE  (visible after login)
+       ================================================================= -->
+  <div v-else>
+
+    <!-- ============ NAVBAR (sticky) ============ -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm" style="background:var(--brand-dark)">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#top">
+          <img v-if="site.logo" :src="site.logo" class="logo-img" alt="logo">
+          <span v-else>{{ site.logoEmoji }}</span>
+          <span>{{ site.title }}</span>
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+            <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+            <li class="nav-item"><a class="nav-link" href="#items">{{ site.itemNamePlural }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#manage">Add {{ site.itemName }}</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            <!-- v-uppercase = custom directive (Practical 7): click the name to uppercase it -->
+            <li class="nav-item text-white-50 small ms-lg-3">
+              <span v-uppercase>{{ user.username }}</span>
+              <span class="badge text-bg-warning ms-1">{{ user.role }}</span>
+            </li>
+            <li class="nav-item"><button class="btn btn-outline-light btn-sm" @click="logout">Logout</button></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- message bar (success / error) -->
+    <div v-if="message" class="container mt-3">
+      <div class="alert alert-info alert-dismissible mb-0">
+        {{ message }}
+        <button type="button" class="btn-close" @click="message = ''"></button>
+      </div>
+    </div>
+
+    <!-- ============ HERO BANNER ============ -->
+    <header id="top" class="hero text-center text-lg-start"
+            :style="site.heroImage ? { backgroundImage: 'linear-gradient(rgba(20,20,60,.65),rgba(20,20,60,.65)), url(' + site.heroImage + ')' } : {}">
+      <div class="container">
+        <span class="badge text-bg-warning mb-3">{{ site.tagline }}</span>
+        <h1 class="fw-bold responsive-title">{{ site.heroHeading }}</h1>
+        <p class="lead mt-3">{{ site.heroText }}</p>
+        <a href="#items" class="btn btn-light btn-lg me-2 mt-2">Browse {{ site.itemNamePlural }}</a>
+        <a href="#manage" class="btn btn-outline-light btn-lg mt-2">+ Add {{ site.itemName }}</a>
+      </div>
+    </header>
+
+    <!-- ============ STATS (counts from the items array) ============ -->
+    <section class="container" style="margin-top:-40px;position:relative">
+      <div class="row g-3">
+        <div class="col-6 col-md" v-for="s in stats" :key="s.label">
+          <div class="stat-card">
+            <div class="num">{{ s.count }}</div>
+            <div class="lbl">{{ s.label }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FEATURES (3 placeholder cards from SITE.features) ============ -->
+    <section id="features" class="container py-5">
+      <h2 class="section-title text-center">[ Why Choose Us ]</h2>
+      <p class="section-sub text-center">[ A one-line sentence introducing the features below. ]</p>
+      <div class="row g-4">
+        <div class="col-12 col-md-4" v-for="f in site.features" :key="f.title">
+          <div class="card h-100 border-0 shadow-sm p-4">
+            <div class="feature-icon">{{ f.icon }}</div>
+            <h5>{{ f.title }}</h5>
+            <p class="text-muted mb-0">{{ f.text }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ITEMS: search + filter + grid/board ============ -->
+    <section id="items" class="container pb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+        <div>
+          <h2 class="section-title mb-0">[ Our {{ site.itemNamePlural }} ]</h2>
+          <div class="text-muted">{{ filteredItems.length }} of {{ items.length }} shown</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <input class="form-control" style="width:200px" v-model="q" placeholder="Search...">
+          <select class="form-select" style="width:170px" v-model="catFilter">
+            <option value="">All categories</option>
+            <option v-for="c in site.categories" :key="c">{{ c }}</option>
+          </select>
+          <div class="btn-group">
+            <button class="btn" :class="view === 'grid' ? 'btn-primary' : 'btn-outline-primary'" @click="view = 'grid'">Grid</button>
+            <button class="btn" :class="view === 'board' ? 'btn-primary' : 'btn-outline-primary'" @click="view = 'board'">Board</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- empty state -->
+      <div v-if="!filteredItems.length" class="text-center text-muted border rounded-4 bg-white p-5">
+        <div style="font-size:3rem">📭</div>
+        <h5>No {{ site.itemNamePlural.toLowerCase() }} found</h5>
+        <p class="mb-0">[ Empty-state message ] Add your first {{ site.itemName.toLowerCase() }} using the form below.</p>
+      </div>
+
+      <!-- ---------- GRID VIEW (.cards = 3 / 2 / 1 columns, see style.css) ---------- -->
+      <div v-else-if="view === 'grid'" class="cards">
+        <!-- CARD: change what each item shows -->
+        <div v-for="item in filteredItems" :key="item.id" class="item-card d-flex flex-column">
+          <div class="item-photo">
+            <img v-if="item.image_url" :src="item.image_url" :alt="item.title" @error="item.image_url = ''">
+            <span v-else>📷 [ Photo ]</span>
+            <span v-if="item.category" class="badge text-bg-dark photo-badge">{{ item.category }}</span>
+            <span class="badge text-bg-warning photo-badge-right text-uppercase">{{ item.status || site.statuses[0] }}</span>
+          </div>
+          <div class="p-3 flex-grow-1">
+            <div class="d-flex justify-content-between gap-2">
+              <h5 class="mb-1">{{ item.title }}</h5>
+              <span v-if="item.price != null" class="price-tag">{{ site.currency }}{{ Number(item.price).toFixed(2) }}</span>
+            </div>
+            <p class="text-muted small mb-2">{{ item.description || "[ No description ]" }}</p>
+            <div class="small text-secondary">
+              <div v-if="item.latitude != null">📍 {{ Number(item.latitude).toFixed(3) }}, {{ Number(item.longitude).toFixed(3) }}</div>
+              <!-- v-date = custom directive formats the date (Practical 7) -->
+              <div>by {{ item.created_by }} · <span v-date="item.created_at"></span></div>
+            </div>
+          </div>
+          <div class="p-3 pt-0 d-flex gap-2">
+            <!-- change status straight from the card -->
+            <select class="form-select form-select-sm" :value="item.status || site.statuses[0]"
+                    @change="moveItem(item, $event.target.value)">
+              <option v-for="s in site.statuses" :key="s">{{ s }}</option>
+            </select>
+            <button class="btn btn-sm btn-outline-primary" @click="editItem(item)">Edit</button>
+            <!-- only admin sees Delete (UI side). The server ALSO checks the role. -->
+            <button v-if="user.role === 'admin'" class="btn btn-sm btn-outline-danger"
+                    @click="removeItem(item.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- BOARD VIEW (drag & drop, Practical 4C) ---------- -->
+      <div v-else class="row g-3">
+        <!-- one dropzone per status. v-for loops over an array -->
+        <div class="col-12 col-md-4" v-for="col in site.statuses" :key="col">
+          <h6 class="text-uppercase fw-bold">{{ col }} <span class="badge text-bg-secondary">{{ itemsIn(col).length }}</span></h6>
+          <!-- dragover.prevent is REQUIRED, otherwise drop never fires -->
+          <div class="dropzone" :class="{ over: overCol === col }"
+               @dragover.prevent="overCol = col"
+               @dragleave="overCol = ''"
+               @drop.prevent="onDrop(col)">
+            <div v-for="item in itemsIn(col)" :key="item.id"
+                 class="card p-2 mb-2 drag-card border-0 shadow-sm" draggable="true"
+                 @dragstart="dragId = item.id">
+              <strong>{{ item.title }}</strong>
+              <small class="text-muted">{{ item.category }}</small>
+              <div class="mt-1">
+                <button class="btn btn-sm btn-outline-primary me-1" @click="editItem(item)">Edit</button>
+                <button v-if="user.role === 'admin'" class="btn btn-sm btn-outline-danger"
+                        @click="removeItem(item.id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ADD / EDIT FORM + LIVE PREVIEW ============ -->
+    <section id="manage" class="container py-5">
+      <h2 class="section-title">{{ editingId ? "Edit" : "Add" }} {{ site.itemName }}</h2>
+      <p class="section-sub">[ Short instruction above the form. ] Your unsaved draft is kept in Local Storage - refresh and it stays.</p>
+
+      <div class="row g-4">
+        <div class="col-12 col-lg-7">
+          <div class="card border-0 shadow-sm p-4">
+            <!-- FORM: change these inputs for your topic. @submit.prevent stops the page reloading. -->
+            <form @submit.prevent="saveItem">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Title *</label>
+                  <input class="form-control" v-model="form.title" placeholder="[ Title / Name ]" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" v-model="form.description" rows="3" placeholder="[ Description ]"></textarea>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Category</label>
+                  <select class="form-select" v-model="form.category">
+                    <option value="">-- choose --</option>
+                    <option v-for="c in site.categories" :key="c">{{ c }}</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">{{ site.priceLabel }}</label>
+                  <input class="form-control" v-model="form.price" type="number" step="0.01" placeholder="0.00">
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Photo URL</label>
+                  <input class="form-control" v-model="form.image_url"
+                         placeholder="images/photo1.jpg   or   https://...">
+                  <div class="form-text">Put image files in the public/images folder and type the path here.</div>
+                </div>
+
+                <!-- GEOLOCATION (Practical 4A) -->
+                <div class="col-12">
+                  <label class="form-label">Location</label>
+                  <div class="input-group">
+                    <input class="form-control" v-model="form.latitude" placeholder="Latitude" readonly>
+                    <input class="form-control" v-model="form.longitude" placeholder="Longitude" readonly>
+                    <button class="btn btn-secondary" type="button" @click="getLocation">📍 Get my location</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <button class="btn btn-primary me-2" type="submit">{{ editingId ? "Update" : "Save" }} {{ site.itemName }}</button>
+                <button class="btn btn-light" type="button" @click="resetForm">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- live preview of the photo + dynamic list demo -->
+        <div class="col-12 col-lg-5">
+          <div class="card border-0 shadow-sm">
+            <div class="photo-box" style="border-radius:14px 14px 0 0">
+              <img v-if="form.image_url" :src="form.image_url" alt="preview" @error="form.image_url = ''">
+              <span v-else>📷 [ Photo preview ]</span>
+            </div>
+            <div class="p-3">
+              <h5 class="mb-1">{{ form.title || "[ Title preview ]" }}</h5>
+              <div class="text-muted small">{{ form.description || "[ Description preview ]" }}</div>
+            </div>
+          </div>
+
+          <!-- Dynamic list (Practical 7) — delete if not needed -->
+          <div class="card border-0 shadow-sm p-3 mt-3">
+            <h6>[ Tags — dynamic list ]</h6>
+            <div class="input-group mb-2">
+              <input class="form-control form-control-sm" v-model="newTag" @keyup.enter="addTag" placeholder="New tag">
+              <button class="btn btn-sm btn-outline-primary" @click="addTag">Add</button>
+            </div>
+            <span v-for="(t, index) in tags" :key="index" class="badge text-bg-light border me-1 mb-1">
+              {{ t }} <a href="#" class="text-danger text-decoration-none" @click.prevent="removeTag(index)">×</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" class="container py-5">
+      <div class="row g-4 align-items-center">
+        <div class="col-12 col-md-5">
+          <div class="photo-box">
+            <img v-if="site.aboutImage" :src="site.aboutImage" alt="about">
+            <span v-else>📷 [ About photo ]</span>
+          </div>
+        </div>
+        <div class="col-12 col-md-7">
+          <h2 class="section-title">{{ site.aboutTitle }}</h2>
+          <p class="text-muted">{{ site.aboutText }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT + FOOTER ============ -->
+    <footer id="contact" class="site-footer">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 col-md-4">
+            <h5 class="text-white">{{ site.logoEmoji }} {{ site.title }}</h5>
+            <p class="small">{{ site.tagline }}</p>
+          </div>
+          <div class="col-6 col-md-4">
+            <h6 class="text-white">Quick links</h6>
+            <div><a href="#items">{{ site.itemNamePlural }}</a></div>
+            <div><a href="#manage">Add {{ site.itemName }}</a></div>
+            <div><a href="#about">About</a></div>
+          </div>
+          <div class="col-6 col-md-4">
+            <h6 class="text-white">Contact</h6>
+            <div class="small">✉️ {{ site.contact.email }}</div>
+            <div class="small">📞 {{ site.contact.phone }}</div>
+            <div class="small">🏠 {{ site.contact.address }}</div>
+          </div>
+        </div>
+        <hr class="border-secondary">
+        <div class="small text-center">{{ site.footer }}</div>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Vue 3 global build (Practical 7A) -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!-- all the logic + the SITE placeholders -->
+<script src="app.js"></script>
+</body>
+</html>

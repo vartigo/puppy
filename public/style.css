@@ -1,0 +1,114 @@
+/* =====================================================================
+   style.css — YOUR OWN STYLES (linked by index.html and tailwind.html)
+   Link it AFTER the Bootstrap / Tailwind links so your rules can override theirs:
+       <link rel="stylesheet" href="style.css">
+
+   Sections:  1) variables  2) base + responsive font  3) hero  4) photo boxes
+              5) card grid + media queries (Practical 3)  6) stats  7) drag & drop
+              8) misc / footer
+
+   CHANGE THE WHOLE COLOUR THEME by editing the 3 variables in section 1.
+   ===================================================================== */
+
+/* ---------- 1. VARIABLES ---------- */
+:root {
+  --brand:      #4f46e5;     /* main colour (buttons, hero)            */
+  --brand-dark: #3730a3;     /* darker shade (hero gradient end)       */
+  --accent:     #f59e0b;     /* highlight colour (badges)              */
+  --soft:       #f4f6fb;     /* page background                        */
+  --radius:     14px;        /* rounded corners everywhere             */
+}
+
+/* ---------- 2. BASE ---------- */
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: var(--soft); }
+html { scroll-behavior: smooth; }
+section { scroll-margin-top: 70px; }        /* anchor links stop below the sticky navbar */
+
+/* v-cloak hides the raw {{ }} template until Vue has started (prevents a flash) */
+[v-cloak] { display: none; }
+
+/* Responsive font (Practical 3B): clamp(min, preferred, max) */
+h1, .hero h1, .responsive-title { font-size: clamp(1.8rem, 5vw, 3.2rem); line-height: 1.15; }   /* .hero h1 is more specific, so Tailwind's reset can't shrink it */
+img { max-width: 100%; height: auto; }      /* images never overflow the screen (3A) */
+
+/* ---------- 3. HERO BANNER ---------- */
+.hero {
+  color: #fff;
+  padding: 90px 0 80px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  background-size: cover;
+  background-position: center;
+}
+.hero p.lead { max-width: 640px; opacity: .92; }
+
+/* ---------- 4. PHOTO BOXES (placeholders that become real photos) ---------- */
+.item-photo, .photo-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: repeating-linear-gradient(45deg, #e8eaf3, #e8eaf3 12px, #f1f3fa 12px, #f1f3fa 24px);
+  display: flex; align-items: center; justify-content: center;
+  color: #8a90a6; font-size: .95rem; text-align: center;
+}
+.photo-box { border-radius: var(--radius); }               /* free-standing version (about, preview) */
+.item-photo img, .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-badge { position: absolute; top: 10px; left: 10px; }
+.photo-badge-right { position: absolute; top: 10px; right: 10px; }
+
+.logo-img { height: 34px; width: auto; }
+
+/* ---------- 5. CARD GRID + MEDIA QUERIES (Practical 3C) ---------- */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 768px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) {
+  .cards { grid-template-columns: 1fr; }
+  .hero  { padding: 60px 0 50px; }
+  body   { font-size: 14px; }
+}
+
+.item-card {
+  background: #fff; border-radius: var(--radius); border: 0;
+  box-shadow: 0 2px 10px rgba(30, 40, 90, .08);
+  transition: transform .15s, box-shadow .15s;
+  overflow: hidden;
+}
+.item-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(30, 40, 90, .15); }
+.price-tag { font-weight: 700; color: var(--brand); }
+
+/* ---------- 6. STAT CARDS + FEATURE CARDS ---------- */
+.stat-card {
+  background: #fff; border-radius: var(--radius); padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(30, 40, 90, .08);
+  border-left: 5px solid var(--brand);
+}
+.stat-card .num { font-size: 2rem; font-weight: 700; line-height: 1; }
+.stat-card .lbl { text-transform: uppercase; font-size: .75rem; letter-spacing: .06em; color: #6b7280; }
+.feature-icon {
+  width: 56px; height: 56px; border-radius: 16px; font-size: 1.7rem;
+  display: flex; align-items: center; justify-content: center;
+  background: #eef0ff; margin-bottom: 12px;
+}
+
+/* ---------- 7. DRAG & DROP (Practical 4C) ---------- */
+.dropzone {
+  min-height: 160px;
+  border: 2px dashed #b4b9cc;
+  border-radius: var(--radius);
+  padding: 8px;
+  background: rgba(255, 255, 255, .6);
+}
+.dropzone.over { background: #e7f1ff; border-color: var(--brand); }   /* column under the cursor */
+.drag-card { cursor: grab; }
+.drag-card:active { cursor: grabbing; }
+
+/* ---------- 8. MISC ---------- */
+.section-title { font-weight: 700; margin-bottom: 4px; }
+.section-sub { color: #6b7280; margin-bottom: 24px; }
+.site-footer { background: #1f2340; color: #c9cde6; padding: 40px 0 20px; margin-top: 60px; }
+.site-footer a { color: #fff; }
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark)); padding: 20px; }
+.login-card { width: 100%; max-width: 400px; border-radius: 18px; }

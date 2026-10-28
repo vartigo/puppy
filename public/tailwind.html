@@ -1,0 +1,317 @@
+<!doctype html>
+<!-- =====================================================================
+  tailwind.html — SAME APP with TAILWIND CSS instead of Bootstrap (Practical 6)
+  Open: http://localhost:3000/tailwind.html      LOGIN: admin / 1234  or  student / 1234
+
+  It uses the SAME app.js (all placeholders in the SITE object) and the SAME
+  style.css.  Only the CSS class names differ:
+      Bootstrap: <div class="container py-4"><button class="btn btn-primary">
+      Tailwind : <div class="mx-auto max-w-6xl px-4 py-4"><button class="rounded bg-blue-600 px-4 py-2 text-white">
+  Tailwind = many small utility classes:  p-4 padding · m-4 margin · flex · grid · gap-4
+  w-full · max-w-xl · mx-auto · text-xl · font-bold · text-blue-700 · bg-white · shadow
+  rounded-lg · hover:bg-blue-700 · md:grid-cols-2 (responsive: applies from md screens up)
+===================================================================== -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[ Your Site Title ]</title>
+
+  <!-- Practical 6: Tailwind via CDN (needs internet) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- your own styles (hero, photo boxes, card grid, media queries) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <!-- =================== A. LOGIN SCREEN =================== -->
+  <div v-if="!user" class="login-wrap">
+    <div class="login-card bg-white p-6 shadow-2xl">
+      <div class="mb-4 text-center">
+        <img v-if="site.logo" :src="site.logo" class="logo-img mx-auto mb-2" alt="logo">
+        <div v-else class="text-5xl">{{ site.logoEmoji }}</div>
+        <h2 class="text-xl font-bold">{{ site.title }}</h2>
+        <p class="text-sm text-slate-500">{{ site.tagline }}</p>
+      </div>
+      <input class="mb-2 w-full rounded border p-2" v-model="login.username" placeholder="Username (admin / student)">
+      <input class="mb-3 w-full rounded border p-2" type="password" v-model="login.password"
+             placeholder="Password (1234)" @keyup.enter="doLogin">
+      <button class="w-full rounded bg-indigo-600 py-2 font-semibold text-white hover:bg-indigo-700" @click="doLogin">Login</button>
+      <p v-if="message" class="mt-3 rounded bg-red-100 p-2 text-red-700">{{ message }}</p>
+    </div>
+  </div>
+
+  <!-- =================== B. THE WEBSITE =================== -->
+  <div v-else>
+
+    <!-- NAVBAR (sticky). menuOpen toggles the mobile menu -->
+    <nav class="sticky top-0 z-50 text-white shadow" style="background:var(--brand-dark)">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <a href="#top" class="flex items-center gap-2 text-lg font-bold">
+          <img v-if="site.logo" :src="site.logo" class="logo-img" alt="logo">
+          <span v-else>{{ site.logoEmoji }}</span>
+          <span>{{ site.title }}</span>
+        </a>
+        <!-- hamburger: visible only on small screens (md:hidden) -->
+        <button class="rounded border border-white/40 px-3 py-1 md:hidden" @click="menuOpen = !menuOpen">☰</button>
+        <!-- links: hidden on phones unless menuOpen, always shown from md up -->
+        <div class="w-full flex-col gap-3 md:flex md:w-auto md:flex-row md:items-center"
+             :class="menuOpen ? 'flex' : 'hidden'" @click="menuOpen = false">
+          <a href="#features" class="hover:text-amber-300">Features</a>
+          <a href="#items" class="hover:text-amber-300">{{ site.itemNamePlural }}</a>
+          <a href="#manage" class="hover:text-amber-300">Add {{ site.itemName }}</a>
+          <a href="#about" class="hover:text-amber-300">About</a>
+          <a href="#contact" class="hover:text-amber-300">Contact</a>
+          <span class="text-sm text-white/70">
+            <span v-uppercase>{{ user.username }}</span>
+            <span class="ml-1 rounded bg-amber-400 px-2 py-0.5 text-xs font-bold text-black">{{ user.role }}</span>
+          </span>
+          <button class="rounded border border-white/60 px-3 py-1 text-sm hover:bg-white/10" @click.stop="logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- message bar -->
+    <div v-if="message" class="mx-auto mt-3 flex max-w-6xl items-center justify-between rounded bg-sky-100 px-4 py-2 text-sky-800">
+      <span>{{ message }}</span>
+      <button @click="message = ''">✕</button>
+    </div>
+
+    <!-- HERO -->
+    <header id="top" class="hero text-center md:text-left"
+            :style="site.heroImage ? { backgroundImage: 'linear-gradient(rgba(20,20,60,.65),rgba(20,20,60,.65)), url(' + site.heroImage + ')' } : {}">
+      <div class="mx-auto max-w-6xl px-4">
+        <span class="inline-block rounded bg-amber-400 px-3 py-1 text-sm font-bold text-black">{{ site.tagline }}</span>
+        <h1 class="mt-3 font-bold">{{ site.heroHeading }}</h1>
+        <p class="lead mt-3 text-lg md:max-w-2xl">{{ site.heroText }}</p>
+        <a href="#items" class="mr-2 mt-4 inline-block rounded bg-white px-6 py-3 font-semibold text-indigo-700 hover:bg-slate-100">Browse {{ site.itemNamePlural }}</a>
+        <a href="#manage" class="mt-4 inline-block rounded border-2 border-white px-6 py-3 font-semibold hover:bg-white/10">+ Add {{ site.itemName }}</a>
+      </div>
+    </header>
+
+    <!-- STATS: 2 columns on phones, as many as there are on md+ -->
+    <section class="relative mx-auto -mt-10 max-w-6xl px-4">
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div class="stat-card" v-for="s in stats" :key="s.label">
+          <div class="num">{{ s.count }}</div>
+          <div class="lbl">{{ s.label }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-center text-3xl font-bold">[ Why Choose Us ]</h2>
+      <p class="mb-8 mt-1 text-center text-slate-500">[ A one-line sentence introducing the features below. ]</p>
+      <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div class="rounded-2xl bg-white p-6 shadow" v-for="f in site.features" :key="f.title">
+          <div class="feature-icon">{{ f.icon }}</div>
+          <h3 class="text-lg font-bold">{{ f.title }}</h3>
+          <p class="text-slate-500">{{ f.text }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ITEMS -->
+    <section id="items" class="mx-auto max-w-6xl px-4 pb-6">
+      <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 class="text-3xl font-bold">[ Our {{ site.itemNamePlural }} ]</h2>
+          <div class="text-slate-500">{{ filteredItems.length }} of {{ items.length }} shown</div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <input class="w-48 rounded border p-2" v-model="q" placeholder="Search...">
+          <select class="rounded border bg-white p-2" v-model="catFilter">
+            <option value="">All categories</option>
+            <option v-for="c in site.categories" :key="c">{{ c }}</option>
+          </select>
+          <button class="rounded border border-indigo-600 px-4 py-2"
+                  :class="view === 'grid' ? 'bg-indigo-600 text-white' : 'text-indigo-600'" @click="view = 'grid'">Grid</button>
+          <button class="rounded border border-indigo-600 px-4 py-2"
+                  :class="view === 'board' ? 'bg-indigo-600 text-white' : 'text-indigo-600'" @click="view = 'board'">Board</button>
+        </div>
+      </div>
+
+      <!-- empty state -->
+      <div v-if="!filteredItems.length" class="rounded-2xl border bg-white p-10 text-center text-slate-500">
+        <div class="text-5xl">📭</div>
+        <h3 class="text-lg font-bold">No {{ site.itemNamePlural.toLowerCase() }} found</h3>
+        <p>[ Empty-state message ] Add your first {{ site.itemName.toLowerCase() }} using the form below.</p>
+      </div>
+
+      <!-- GRID VIEW (.cards from style.css = 3 / 2 / 1 columns, Practical 3C) -->
+      <div v-else-if="view === 'grid'" class="cards">
+        <!-- CARD: change what each item shows -->
+        <div v-for="item in filteredItems" :key="item.id" class="item-card flex flex-col">
+          <div class="item-photo">
+            <img v-if="item.image_url" :src="item.image_url" :alt="item.title" @error="item.image_url = ''">
+            <span v-else>📷 [ Photo ]</span>
+            <span v-if="item.category" class="photo-badge rounded bg-slate-800 px-2 py-0.5 text-xs text-white">{{ item.category }}</span>
+            <span class="photo-badge-right rounded bg-amber-400 px-2 py-0.5 text-xs font-bold uppercase text-black">{{ item.status || site.statuses[0] }}</span>
+          </div>
+          <div class="flex-1 p-4">
+            <div class="flex justify-between gap-2">
+              <h3 class="text-lg font-bold">{{ item.title }}</h3>
+              <span v-if="item.price != null" class="price-tag">{{ site.currency }}{{ Number(item.price).toFixed(2) }}</span>
+            </div>
+            <p class="mb-2 text-sm text-slate-500">{{ item.description || "[ No description ]" }}</p>
+            <div class="text-xs text-slate-400">
+              <div v-if="item.latitude != null">📍 {{ Number(item.latitude).toFixed(3) }}, {{ Number(item.longitude).toFixed(3) }}</div>
+              <div>by {{ item.created_by }} · <span v-date="item.created_at"></span></div>
+            </div>
+          </div>
+          <div class="flex gap-2 p-4 pt-0">
+            <select class="w-full rounded border p-1 text-sm" :value="item.status || site.statuses[0]"
+                    @change="moveItem(item, $event.target.value)">
+              <option v-for="s in site.statuses" :key="s">{{ s }}</option>
+            </select>
+            <button class="rounded border border-indigo-600 px-3 text-sm text-indigo-600" @click="editItem(item)">Edit</button>
+            <button v-if="user.role === 'admin'" class="rounded border border-red-500 px-3 text-sm text-red-600"
+                    @click="removeItem(item.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOARD VIEW (drag & drop, Practical 4C) -->
+      <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div v-for="col in site.statuses" :key="col">
+          <h3 class="mb-1 text-sm font-bold uppercase">{{ col }} ({{ itemsIn(col).length }})</h3>
+          <div class="dropzone" :class="{ over: overCol === col }"
+               @dragover.prevent="overCol = col"
+               @dragleave="overCol = ''"
+               @drop.prevent="onDrop(col)">
+            <div v-for="item in itemsIn(col)" :key="item.id"
+                 class="drag-card mb-2 rounded-lg bg-white p-2 text-sm shadow" draggable="true"
+                 @dragstart="dragId = item.id">
+              <div class="font-bold">{{ item.title }}</div>
+              <div class="text-slate-500">{{ item.category }}</div>
+              <div class="mt-1 space-x-1">
+                <button class="rounded border border-indigo-600 px-2 text-indigo-600" @click="editItem(item)">Edit</button>
+                <button v-if="user.role === 'admin'" class="rounded border border-red-500 px-2 text-red-600"
+                        @click="removeItem(item.id)">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADD / EDIT FORM + PREVIEW -->
+    <section id="manage" class="mx-auto max-w-6xl px-4 py-12">
+      <h2 class="text-3xl font-bold">{{ editingId ? "Edit" : "Add" }} {{ site.itemName }}</h2>
+      <p class="mb-6 text-slate-500">[ Short instruction above the form. ] Your unsaved draft is kept in Local Storage.</p>
+
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <!-- FORM: change these inputs for your topic -->
+        <form class="space-y-3 rounded-2xl bg-white p-6 shadow lg:col-span-3" @submit.prevent="saveItem">
+          <label class="block text-sm font-semibold">Title *
+            <input class="mt-1 w-full rounded border p-2 font-normal" v-model="form.title" placeholder="[ Title / Name ]" required>
+          </label>
+          <label class="block text-sm font-semibold">Description
+            <textarea class="mt-1 w-full rounded border p-2 font-normal" rows="3" v-model="form.description" placeholder="[ Description ]"></textarea>
+          </label>
+          <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <label class="block text-sm font-semibold">Category
+              <select class="mt-1 w-full rounded border bg-white p-2 font-normal" v-model="form.category">
+                <option value="">-- choose --</option>
+                <option v-for="c in site.categories" :key="c">{{ c }}</option>
+              </select>
+            </label>
+            <label class="block text-sm font-semibold">{{ site.priceLabel }}
+              <input class="mt-1 w-full rounded border p-2 font-normal" type="number" step="0.01" v-model="form.price" placeholder="0.00">
+            </label>
+          </div>
+          <label class="block text-sm font-semibold">Photo URL
+            <input class="mt-1 w-full rounded border p-2 font-normal" v-model="form.image_url" placeholder="images/photo1.jpg   or   https://...">
+          </label>
+
+          <!-- GEOLOCATION (Practical 4A) -->
+          <div class="flex gap-2">
+            <input class="w-full rounded border bg-slate-50 p-2" v-model="form.latitude" placeholder="Latitude" readonly>
+            <input class="w-full rounded border bg-slate-50 p-2" v-model="form.longitude" placeholder="Longitude" readonly>
+            <button type="button" class="whitespace-nowrap rounded bg-slate-600 px-3 text-white" @click="getLocation">📍 Locate</button>
+          </div>
+
+          <div>
+            <button class="rounded bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700">{{ editingId ? "Update" : "Save" }} {{ site.itemName }}</button>
+            <button type="button" class="ml-2 rounded bg-slate-200 px-5 py-2" @click="resetForm">Clear</button>
+          </div>
+        </form>
+
+        <!-- live preview + dynamic list demo -->
+        <div class="lg:col-span-2">
+          <div class="overflow-hidden rounded-2xl bg-white shadow">
+            <div class="photo-box" style="border-radius:0">
+              <img v-if="form.image_url" :src="form.image_url" alt="preview" @error="form.image_url = ''">
+              <span v-else>📷 [ Photo preview ]</span>
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-bold">{{ form.title || "[ Title preview ]" }}</h3>
+              <p class="text-sm text-slate-500">{{ form.description || "[ Description preview ]" }}</p>
+            </div>
+          </div>
+
+          <!-- Dynamic list (Practical 7) — delete if not needed -->
+          <div class="mt-4 rounded-2xl bg-white p-4 shadow">
+            <h4 class="mb-2 font-bold">[ Tags — dynamic list ]</h4>
+            <div class="mb-2 flex gap-2">
+              <input class="w-full rounded border p-1 text-sm" v-model="newTag" @keyup.enter="addTag" placeholder="New tag">
+              <button class="rounded border border-indigo-600 px-3 text-sm text-indigo-600" @click="addTag">Add</button>
+            </div>
+            <span v-for="(t, index) in tags" :key="index" class="mb-1 mr-1 inline-block rounded border bg-slate-50 px-2 py-0.5 text-sm">
+              {{ t }} <a href="#" class="text-red-600" @click.prevent="removeTag(index)">×</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="mx-auto max-w-6xl px-4 py-12">
+      <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2">
+        <div class="photo-box">
+          <img v-if="site.aboutImage" :src="site.aboutImage" alt="about">
+          <span v-else>📷 [ About photo ]</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold">{{ site.aboutTitle }}</h2>
+          <p class="mt-2 text-slate-500">{{ site.aboutText }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT + FOOTER -->
+    <footer id="contact" class="site-footer">
+      <div class="mx-auto max-w-6xl px-4">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div>
+            <h3 class="text-lg font-bold text-white">{{ site.logoEmoji }} {{ site.title }}</h3>
+            <p class="text-sm">{{ site.tagline }}</p>
+          </div>
+          <div class="text-sm">
+            <h4 class="mb-1 font-bold text-white">Quick links</h4>
+            <div><a href="#items">{{ site.itemNamePlural }}</a></div>
+            <div><a href="#manage">Add {{ site.itemName }}</a></div>
+            <div><a href="#about">About</a></div>
+          </div>
+          <div class="text-sm">
+            <h4 class="mb-1 font-bold text-white">Contact</h4>
+            <div>✉️ {{ site.contact.email }}</div>
+            <div>📞 {{ site.contact.phone }}</div>
+            <div>🏠 {{ site.contact.address }}</div>
+          </div>
+        </div>
+        <hr class="my-4 border-slate-600">
+        <div class="text-center text-sm">{{ site.footer }}</div>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

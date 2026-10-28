@@ -1,0 +1,16 @@
+{
+  "name": "fsd-exam-template",
+  "version": "1.0.0",
+  "description": "End-to-end template: Vue (2/3) + Bootstrap/Tailwind + Node + MySQL/MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:mysql": "set DB_MODE=mysql&& node server.js",
+    "start:mongo": "set DB_MODE=mongo&& node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0",
+    "mysql": "^2.18.1"
+  }
+}
